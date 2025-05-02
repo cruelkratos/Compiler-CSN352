@@ -151,6 +151,148 @@ This compiler project implements a full-featured compiler for a C-like language,
     EndFunc
 ```
 
+
+### 6. ASM Generation (x86)
+
+**Output of ASM Stage**: 
+- Assembly Code that can run on your hardware
+- Visual Representation of Control Flow Graphs
+
+**Advanced Supported Features**
+- Multidimensional array access and declaration
+- Multilevel pointer and dereferencing
+- Struct/Union Access using DOT and -> operators
+- Enumerators
+- typedef
+- References
+- Recursion
+- Until Loops
+
+**Example Output**
+
+```assembly
+section .text
+global _start
+extern printf
+extern scanf
+extern malloc
+extern free
+extern exit
+; Function _start
+_start:
+	and rsp, -16
+	call main
+	mov rdi, rax
+	call exit
+; Function func
+func:
+	push rbp
+	mov rbp, rsp
+	sub rsp, 32
+	mov dword [rbp-4], edi
+	cmp dword [rbp-4], 0
+	sete r15b
+	movzx r15d, r15b
+	mov dword [rbp-8], r15d
+	mov dword [rbp-8], r15d
+	cmp dword [rbp-8], 0
+	je $L0
+	mov rax, 1
+jmp $endfunc
+$L0:
+	mov r15d, dword [rbp-4]
+	sub r15d, 1
+	mov dword [rbp-12], r15d
+	mov dword [rbp-12], r15d
+	push rax
+	push rcx
+	push rdx
+	push rsi
+	push rdi
+	push r8
+	push r9
+	push r10
+	push r11
+	sub rsp, 8
+	mov edi, dword [rbp-12]
+	call func
+	mov dword [rbp-16], eax
+	add rsp, 8
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rdi
+	pop rsi
+	pop rdx
+	pop rcx
+	pop rax
+	mov r15d, dword [rbp-16]
+	imul r15d, 2
+	mov dword [rbp-20], r15d
+	mov dword [rbp-20], r15d
+	mov eax, dword [rbp-20]
+jmp $endfunc
+$endfunc:
+	leave
+	ret
+; Function main
+main:
+	push rbp
+	mov rbp, rsp
+	sub rsp, 48
+	mov r15d, dword [rbp-20]
+	mov dword [rbp-4], r15d
+	mov dword [rbp-20], r15d
+	lea r15, [rbp-4]
+	mov qword [rbp-28], r15
+	mov qword [rbp-28], r15
+	mov r15, qword [rbp-28]
+	mov qword [rbp-16], r15
+	mov qword [rbp-28], r15
+	mov r15, qword [rbp-16]
+	mov qword [r15], 11
+	mov qword [rbp-16], r15
+	push rax
+	push rcx
+	push rdx
+	push rsi
+	push rdi
+	push r8
+	push r9
+	push r10
+	push r11
+	sub rsp, 8
+	mov rdi, str0
+	mov r15, qword [rbp-16]
+	mov r14, qword [r15]
+	mov dword [rbp-32], r14d
+	mov qword [rbp-16], r15
+	mov esi, dword [rbp-32]
+	call printf
+	mov dword [rbp-36], eax
+	add rsp, 8
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rdi
+	pop rsi
+	pop rdx
+	pop rcx
+	pop rax
+$endmain:
+	leave
+	ret
+
+section .data
+str0 db "f", " ", "i", "s", " ", "%", "d", 0
+```
+
+# Control Flow Graph:
+
+![CFG](images/ir_test.png)
+
 ## Quick Start
 
 ### Prerequisites
@@ -174,7 +316,8 @@ chmod a+x run.sh   # Give all users execute permission
 #### Standard Execution
 ```bash
 # Linux
-./run.sh 
+./run.sh
+followed by ./test.sh
 
 # Windows
 run.bat
